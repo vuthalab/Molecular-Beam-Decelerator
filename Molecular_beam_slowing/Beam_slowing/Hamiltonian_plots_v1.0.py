@@ -5,7 +5,7 @@ written by Henry Vu, James Park
 
 # Change directory to where the files are located.
 import os
-os.chdir("/home/james/Desktop/EDM Research")
+os.chdir("/home/labuser/Desktop/Molecular-Beam-Decelerator/Molecular_beam_slowing")
 
 
 ## Python Packages
@@ -19,10 +19,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.interpolate import RegularGridInterpolator
 import time
-from edm_class_objects import *
-from magnetic_field_eqs import *
-from hamiltonian_eqs import *
-from helper_functions import *
+#from edm_class_objects.py import *
+# from magnetic_field_eqs import *
+# from hamiltonian_eqs import *
+# from helper_functions import *
 
 
 ## Magnetic Field Equations
@@ -497,23 +497,25 @@ for i in range(N_excited):
 
 ## Ground State, z-axis, (Spaghetti and Lasgna Plots)
 #Spaghetti plots
-plt.figure("Ground State Spaghetti Plot")
-plt.grid(True)
-plt.plot(z * 1e3, [lg.eigh(H0 + B_scale * fullfield(0, 0, z, stagescale)[i] * H_int)[0] for i in range(len(z))])
-plt.title("Energy spectrum for YbOH in the Halbach field (Ground State)")
+plt.figure("Spaghetti Energy spectrum for YbOH in the Halbach field (Ground State)")
+
+plt.plot(z * 1e3, [lg.eigh(H0 + B_scale * fullfield(0, 0, z, stagescale)[i] \
+* H_int)[0]  for i in range(len(z))])
+plt.title("Spaghetti Energy spectrum for YbOH in the Halbach field (Ground State)")
 plt.xlabel("Position [mm]")
 plt.ylabel("Energy [GHz]")
 plt.margins(0)
 plt.show()
+
 
 XZ, ZX = np.meshgrid(x, z, indexing='ij', sparse=True)
 xz_bfield_zx = fullfield(XZ, 0, ZX, stagescale)
 surface_plots_xz = hamiltonian_surface_plots(ZX)
 
 #Lasgna plot
-fig = plt.figure("Ground State Lasenga plot 3-D (X and Z)")
+fig = plt.figure("Lasgna Energy spectrum for YbOH in the Halbach field (Ground State)")
 ax = fig.add_subplot(111, projection='3d')
-ax.set_title('3D Spaghetti Plots')
+ax.set_title('Lasgna Energy spectrum for YbOH in the Halbach field (Ground State)')
 ax.set_xlabel("X [m]")
 ax.set_ylabel("Z [m]")
 ax.set_zlabel("Energy Levels")
@@ -529,11 +531,11 @@ plt.show()
 
 ## Excited State, z-axis, (Spaghetti and Lasgna Plots)
 #Excited Spaghetti Plot
-plt.figure("Excited State Spaghetti Plot")
+plt.figure("Spaghetti Energy spectrum for YbOH in the Halbach field (Excited State)")
 plt.grid(True)
-plt.plot(z*1e3, [lg.eigh(H0_excited + B_scale * fullfield(0, 0, z, stagescale)[i] \
+plt.plot(z * 1e3, [lg.eigh(H0_excited + B_scale * fullfield(0, 0, z, stagescale)[i] \
 * H_int_excited)[0]  for i in range(len(z))])
-plt.title("Energy spectrum for YbOH in the Halbach field (Excited State)")
+plt.title("Spaghetti Energy spectrum for YbOH in the Halbach field (Excited State)")
 plt.xlabel("Position [mm]")
 plt.ylabel("Energy [GHz]")
 plt.show()
@@ -543,9 +545,9 @@ xz_bfield_zx = fullfield(e_XZ, 0, e_ZX, stagescale)
 surface_plots_xz = excited_hamiltonian_surface_plots(e_ZX)
 
 #Excited Lasgna Plot
-fig = plt.figure("Excited State Lasenga plot 3-D (X and Z)")
+fig = plt.figure("Lasagna Energy spectrum for YbOH in the Halbach field (Excited State)")
 ax = fig.add_subplot(111, projection='3d')
-ax.set_title('Excited 3D Spaghetti Plots')
+ax.set_title('Lasagna Energy spectrum for YbOH in the Halbach field (Excited State)')
 ax.set_xlabel("X [m]")
 ax.set_ylabel("Z [m]")
 ax.set_zlabel("Energy Levels")
@@ -560,7 +562,7 @@ plt.show()
 
 
 ## Specific (Ground State) 3-D Surface Plots
-fig = plt.figure("Test")
+fig = plt.figure("3D Lasgna Plots (Ground States)")
 ax = fig.add_subplot(111, projection='3d')
 
 ax.plot_surface(XZ, ZX, energy_curves[0].energy_values)
@@ -574,7 +576,7 @@ plt.show()
 
 
 ## Specific (Excited State) 3-D Surface Plots
-fig = plt.figure("Test")
+fig = plt.figure("3D Lasgna Plots (Excited States")
 ax = fig.add_subplot(111, projection='3d')
 
 ax.plot_surface(XZ, ZX, excited_energy_curves[0].energy_values)
