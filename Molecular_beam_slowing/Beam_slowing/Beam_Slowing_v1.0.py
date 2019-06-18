@@ -6,6 +6,9 @@ Created on Wed Mar  6 10:37:32 2019
 @author: Z0RA
 """
 
+import os
+os.chdir("/home/james/Desktop/Molecular-Beam-Decelerator/Molecular_beam_slowing/Magnetic Field Plot/Code")
+
 #%%
 import numpy as np
 from numpy import pi,sin,cos,tan,sqrt
@@ -14,6 +17,7 @@ from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.integrate import odeint 
 from scipy.interpolate import RegularGridInterpolator
+from textfile_functions import *
 
 # Units
 mm = ms = 1e-3
@@ -35,9 +39,9 @@ def fullfield(x,y,z):
 
 
 # Creating arrays and meshgrids
-xterms = 349
-yterms = 350
-zterms = 500
+xterms = 51
+yterms = 51
+zterms = 41
 radius = 2.5 # mm
 zlen = 20 # mm
 
@@ -62,8 +66,11 @@ Bdxz,Bdzx = np.gradient(fullfield(XZ,ypla,ZX))
 # Gradient of fullfield at z = zplane(z)
 Bdxy,Bdyx = np.gradient(fullfield(XY,YX,zpla))
 # Gradient of the fullfield(x,y,z) at all points
-Bdxyz,Bdyzx,Bdzxy = np.gradient(fullfield(XYZ,YZX,ZXY)*2.28e4)
-        # Need to add a scaling factor into this above term to satisfy the condition for the slower
+
+mag_values = load_txtfile_verbatim("bnorm_actual.txt")
+Bdxyz,Bdyzx,Bdzxy = np.gradient(mag_values)
+#Bdxyz,Bdyzx,Bdzxy = np.gradient(fullfield(XYZ,YZX,ZXY)*2.28e4)
+#         # Need to add a scaling factor into this above term to satisfy the condition for the slower
 
 # Interpolate the gradient of the fullfield
 Bdxfn = RegularGridInterpolator((x,y,z), Bdxyz,bounds_error=False,fill_value=0)

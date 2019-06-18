@@ -1,8 +1,8 @@
 """
 Useful Functions for Files.
 """
-import os
-os.chdir("C:/Users/jp7de/OneDrive/Desktop/Molecular Beam Slowing/Numerical B_Field/code")
+#import os
+#os.chdir("C:/Users/jp7de/OneDrive/Desktop/Molecular Beam Slowing/Numerical B_Field/code")
 
 
 def convert_file(file_name, current, replace):
@@ -29,7 +29,29 @@ def convert_file(file_name, current, replace):
             f.write(newText)
 
 
-def load_txtfile(file_name):
+def load_txtfile_verbatim(file_name):
+    """
+    INCOMPLETE
+    This function is used to load textfiles that may otherwise contain too large 
+    amounts of data.
+    
+    The function reads the data in the textfile (Which should only contains 
+    numbers) and returns the data as is
+    
+    @type file_name: str
+    @rtype: str
+    """
+    list_values= []
+    with open(file_name) as f:
+        new_Text = f.readline()
+        while new_Text != '':
+            for i in range(len(new_Text)):
+                list_values.append(float(new_Text[i]))
+            new_Text = f.readline()
+    return list_values
+
+
+def load_txtfile_list(file_name):
     """
     This function is used to load textfiles that may otherwise contain too large 
     amounts of data.

@@ -610,11 +610,11 @@ plt.show()
 xz_bfield_zx = fullfield(XZ, 0, ZX, stagescale)
 surface_plots_xz = hamiltonian_surface_plots(ZX)
 
-fig = plt.figure("Ground State Lasenga plot 3-D (X and Z)")
+fig = plt.figure("Ground State Lasnga plot 3-D (X and Z)")
 ax = fig.add_subplot(111, projection='3d')
-ax.set_title('3D Spaghetti Plots')
-ax.set_xlabel("X [m]")
-ax.set_ylabel("Z [m]")
+ax.set_title('3D Lasgna Plots')
+ax.set_xlabel("X [mm]")
+ax.set_ylabel("Z [mm]")
 ax.set_zlabel("Energy Levels")
 energy_curves = []
 
@@ -624,19 +624,19 @@ for i in range(36):
     surface_points_xz = plot_surface_matrix(surface_plots_xz, i)
     energy_curves.append(Energy_Curve(surface_points_xz, \
     "Ground State Energy Curve " + str(i + 1)))
-    ax.plot_surface(XZ, ZX, surface_points_xz)
+    ax.plot_surface(XZ *1e3, ZX *1e3, surface_points_xz)
 plt.show()
 
 
 # Specific Lasgna surfaces
 fig = plt.figure("Ground State Lasagna Plots")
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(XZ, ZX, energy_curves[0].energy_values)
-ax.plot_surface(XZ, ZX, energy_curves[25].energy_values)
-ax.plot_surface(XZ, ZX, energy_curves[35].energy_values)
+ax.plot_surface(XZ *1e3, ZX *1e3, energy_curves[0].energy_values)
+ax.plot_surface(XZ *1e3, ZX *1e3,  energy_curves[25].energy_values)
+ax.plot_surface(XZ *1e3, ZX *1e3,  energy_curves[35].energy_values)
 ax.set_title('3D Lasgna Plots (Ground States)')
-ax.set_xlabel("X [m]")
-ax.set_ylabel("Z [m]")
+ax.set_xlabel("X [mm]")
+ax.set_ylabel("Z [mm]")
 ax.set_zlabel("Energy Levels")
 plt.show()
 
@@ -680,8 +680,8 @@ surface_plots_xz = excited_hamiltonian_surface_plots(e_ZX)
 fig = plt.figure("Excited State Lasenga plot 3-D (X and Z)")
 ax = fig.add_subplot(111, projection='3d')
 ax.set_title('Excited 3D Spaghetti Plots')
-ax.set_xlabel("X [m]")
-ax.set_ylabel("Z [m]")
+ax.set_xlabel("X [mm]")
+ax.set_ylabel("Z [mm]")
 ax.set_zlabel("Energy Levels")
 excited_energy_surfaces = []
 for i in range(24):
@@ -689,7 +689,7 @@ for i in range(24):
     excited_surface_points_xz = plot_surface_matrix(surface_plots_xz, i)
     excited_energy_surfaces.append(Energy_Curve(excited_surface_points_xz, \
     "Excited Energy Curve" + str(i + 1)))
-    ax.plot_surface(e_XZ, e_ZX, excited_surface_points_xz)
+    ax.plot_surface(e_XZ *1e3, e_ZX *1e3, excited_surface_points_xz)
 plt.show()
 
 
@@ -697,12 +697,12 @@ plt.show()
 fig = plt.figure("Ground State Lasagna Plots")
 ax = fig.add_subplot(111, projection='3d')
 
-ax.plot_surface(e_XZ, e_ZX, excited_energy_surfaces[0].energy_values)
-ax.plot_surface(e_XZ, e_ZX, excited_energy_surfaces[10].energy_values)
-ax.plot_surface(e_XZ, e_ZX, excited_energy_surfaces[20].energy_values)
+ax.plot_surface(e_XZ *1e3, e_ZX *1e3, excited_energy_surfaces[0].energy_values)
+ax.plot_surface(e_XZ *1e3, e_ZX *1e3, excited_energy_surfaces[10].energy_values)
+ax.plot_surface(e_XZ *1e3, e_ZX *1e3, excited_energy_surfaces[20].energy_values)
 ax.set_title('3D Lasgna Plots (Excited States)')
-ax.set_xlabel("X [m]")
-ax.set_ylabel("Z [m]")
+ax.set_xlabel("X [mm]")
+ax.set_ylabel("Z [mm]")
 ax.set_zlabel("Energy Levels")
 plt.show()
 

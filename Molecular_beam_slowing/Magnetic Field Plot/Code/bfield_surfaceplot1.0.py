@@ -1,5 +1,5 @@
 import os
-os.chdir("C:/Users/jp7de/OneDrive/Desktop/Molecular Beam Slowing/Numerical B_Field/code")
+os.chdir("/home/james/Desktop/Molecular-Beam-Decelerator/Molecular_beam_slowing/Magnetic Field Plot/Code")
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -90,23 +90,23 @@ for i in range(loop_range):
 
 
 # Bfield values at some Z.
-plz = list_to_numpy_matrix(x, y, bfields[0])
-plz2 = list_to_numpy_matrix(x, y, bfields[20])
-plz3 = list_to_numpy_matrix(x, y, bfields[40])
+start = list_to_numpy_matrix(x, y, bfields[0])
+midpoint = list_to_numpy_matrix(x, y, bfields[20])
+end = list_to_numpy_matrix(x, y, bfields[40])
 
             
 ## Plotting Figures
 # When the meshgrid is symmetric, ie size(x) = size(y), they can not all be named X,Y,Z
 # for each meshgrid, this the names are written to be cyclic and contain the dimensions of the grid
 
-XY, YX = np.meshgrid(x, y,indexing='ij', sparse=True)
-XZ, ZX = np.meshgrid(x, z,indexing='ij', sparse=True)
-YZ, ZY = np.meshgrid(y, z,indexing='ij', sparse=True)
-XYZ,YZX,ZXY = np.meshgrid(x,y,z,indexing='ij', sparse=True)
+XY, YX = np.meshgrid(x, y, indexing='ij', sparse=True)
+XZ, ZX = np.meshgrid(x, z, indexing='ij', sparse=True)
+YZ, ZY = np.meshgrid(y, z, indexing='ij', sparse=True)
+XYZ,YZX,ZXY = np.meshgrid(x, y, z, indexing='ij', sparse=True)
 
 fig = plt.figure("Z = 0")
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(XY, YX, plz,cmap='coolwarm')
+ax.plot_surface(XY, YX, start,cmap='coolwarm')
 ax.set_title('surface')
 ax.set_xlabel("x [m]")
 ax.set_ylabel("y [m]")
@@ -114,7 +114,7 @@ ax.set_zlabel("|B| [T]")
 
 fig = plt.figure("Z = 10")
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(XY, YX, plz2,cmap='coolwarm')
+ax.plot_surface(XY, YX, midpoint, cmap='coolwarm')
 ax.set_title('surface')
 ax.set_xlabel("x [m]")
 ax.set_ylabel("y [m]")
@@ -122,7 +122,7 @@ ax.set_zlabel("|B| [T]")
 
 fig = plt.figure("Z = 20")
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(XY, YX, plz3,cmap='coolwarm')
+ax.plot_surface(XY, YX, end, cmap='coolwarm')
 ax.set_title('surface')
 ax.set_xlabel("x [m]")
 ax.set_ylabel("y [m]")
