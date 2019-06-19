@@ -134,25 +134,6 @@ def curve_inner_points(curve_points, j):
     return np.array(list)
 
 
-def plot_surface_matrix(surface_points, k):
-    """
-    Plots the Energy vs position plot in a 3 Dimensional axis.
-    The surface points refers to an array of points corresponding to 1
-    coordinate.
-
-    @type surface_points: Numpy Array
-    @type k: integer
-    @rtype: Numpy Array
-    """
-    list = []
-    for i in range(len(surface_points)):
-        nested_list = []
-        for j in range(len(surface_points[i])):
-            nested_list.append(surface_points[i][j][k])
-        list.append(nested_list)
-    return np.array(list)
-
-
 def hamiltonian_surface_plots(axis1):
     """
     Creates a 3-D array containing the points that were operated on by the
@@ -191,6 +172,24 @@ def excited_hamiltonian_surface_plots(axis1):
 
     surface_plots = np.array(surface_plots)
     return surface_plots
+
+
+def rearrange_hamiltonian_points(surface_points, k):
+    """
+    Rearranges the points of hamiltonian matrix into an array of points
+    corresponding to 1 Energy surface in a 3 Dimensional Axis.
+
+    @type surface_points: Numpy Array
+    @type k: integer
+    @rtype: Numpy Array
+    """
+    list = []
+    for i in range(len(surface_points)):
+        nested_list = []
+        for j in range(len(surface_points[i])):
+            nested_list.append(surface_points[i][j][k])
+        list.append(nested_list)
+    return np.array(list)
 
 
 ## Hamiltonian equations
@@ -490,9 +489,9 @@ B_scale = 1 # Scale the maximum magnitude of the field produced by the analytic 
 """
 Change these terms to define the smoothness of the plots.
 """
-xterms = 3
-yterms = 3
-zterms = 3 #change this to 4e3
+xterms = 51
+yterms = 51
+zterms = 51 #change this to 4e3
 
 radius = 10 # mm
 zlen = 20 # mm
@@ -500,12 +499,15 @@ zlen = 20 # mm
 x = np.linspace(-radius, radius, xterms) * mm
 y = np.linspace(-radius, radius, yterms) * mm
 z = np.linspace(0, zlen, zterms) * mm
+
 XZ, ZX = np.meshgrid(x, z, indexing='ij', sparse=True)
+XY, YX = np.meshgrid(x, y, indexing='ij', sparse=True)
 
 x1 = np.linspace(-radius, radius, xterms) * mm
 y1 = np.linspace(-radius, radius, yterms) * mm
 z1 = np.linspace(0, zlen, zterms) * mm
 e_XZ, e_ZX = np.meshgrid(x1, z1, indexing='ij', sparse=True)
+
 
 ## Ground State Constants
 # Molecule constants
@@ -621,7 +623,7 @@ energy_curves = []
 
 for i in range(36):
     #36 refers the the dimension of our Hamiltonian matrix (36x36)
-    surface_points_xz = plot_surface_matrix(surface_plots_xz, i)
+    surface_points_xz = rearrange_hamiltonian_points(surface_plots_xz, i)
     energy_curves.append(Energy_Curve(surface_points_xz, \
     "Ground State Energy Curve " + str(i + 1)))
     ax.plot_surface(XZ *1e3, ZX *1e3, surface_points_xz)
@@ -683,10 +685,11 @@ ax.set_title('Excited 3D Spaghetti Plots')
 ax.set_xlabel("X [mm]")
 ax.set_ylabel("Z [mm]")
 ax.set_zlabel("Energy Levels")
+
 excited_energy_surfaces = []
 for i in range(24):
     #24 refers the the dimension of our Excited Hamiltonian matrix (24x24)
-    excited_surface_points_xz = plot_surface_matrix(surface_plots_xz, i)
+    excited_surface_points_xz = rearrange_hamiltonian_points(surface_plots_xz, i)
     excited_energy_surfaces.append(Energy_Curve(excited_surface_points_xz, \
     "Excited Energy Curve" + str(i + 1)))
     ax.plot_surface(e_XZ *1e3, e_ZX *1e3, excited_surface_points_xz)
@@ -697,9 +700,9 @@ plt.show()
 fig = plt.figure("Ground State Lasagna Plots")
 ax = fig.add_subplot(111, projection='3d')
 
-ax.plot_surface(e_XZ *1e3, e_ZX *1e3, excited_energy_surfaces[0].energy_values)
-ax.plot_surface(e_XZ *1e3, e_ZX *1e3, excited_energy_surfaces[10].energy_values)
-ax.plot_surface(e_XZ *1e3, e_ZX *1e3, excited_energy_surfaces[20].energy_values)
+ax.plot_surface(e_XZ * 1e3, e_ZX * 1e3, excited_energy_surfaces[0].energy_values)
+ax.plot_surface(e_XZ * 1e3, e_ZX * 1e3, excited_energy_surfaces[10].energy_values)
+ax.plot_surface(e_XZ * 1e3, e_ZX * 1e3, excited_energy_surfaces[20].energy_values)
 ax.set_title('3D Lasgna Plots (Excited States)')
 ax.set_xlabel("X [mm]")
 ax.set_ylabel("Z [mm]")

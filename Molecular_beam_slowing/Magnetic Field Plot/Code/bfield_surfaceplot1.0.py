@@ -72,7 +72,7 @@ def list_to_numpy_matrix(xdim, ydim, bvalues):
     
     
 #Put in the name of your text file here.
-mag_values = load_txtfile("bnorm_actual.txt")
+mag_values = load_txtfile_list("bnorm_actual.txt")
         
 
 # Creates nested list of b-field values. 
@@ -90,7 +90,7 @@ for i in range(loop_range):
 
 
 # Bfield values at some Z.
-start = list_to_numpy_matrix(x, y, bfields[0])
+start = list_to_numpy_matrix(x, y, bfields[15])
 midpoint = list_to_numpy_matrix(x, y, bfields[20])
 end = list_to_numpy_matrix(x, y, bfields[40])
 
@@ -102,7 +102,7 @@ end = list_to_numpy_matrix(x, y, bfields[40])
 XY, YX = np.meshgrid(x, y, indexing='ij', sparse=True)
 XZ, ZX = np.meshgrid(x, z, indexing='ij', sparse=True)
 YZ, ZY = np.meshgrid(y, z, indexing='ij', sparse=True)
-XYZ,YZX,ZXY = np.meshgrid(x, y, z, indexing='ij', sparse=True)
+XYZ, YZX, ZXY = np.meshgrid(x, y, z, indexing='ij', sparse=True)
 
 fig = plt.figure("Z = 0")
 ax = fig.add_subplot(111, projection='3d')
