@@ -4,11 +4,11 @@ written by Henry Vu, James Park
 """
 
 # Change directory to where the files are located.
-import os
-os.chdir("/home/james/Desktop/EDM Research")
+
 
 
 ## Python Packages
+import os
 import numpy as np
 from numpy import linalg as lg
 from numpy import pi,sin,cos,tan,sqrt
@@ -19,10 +19,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.interpolate import RegularGridInterpolator
 import time
-# from edm_class_objects import *
-# from magnetic_field_eqs import *
-# from hamiltonian_eqs import *
-# from helper_functions import *
+os.chdir("/home/james/Desktop/Molecular-Beam-Decelerator/Molecular_beam_slowing/Code/Magnetic Field Plot/")
+from textfile_functions import *
 
 
 ## Magnetic Field Equations
@@ -134,42 +132,52 @@ def curve_inner_points(curve_points, j):
     return np.array(list)
 
 
-def hamiltonian_surface_plots(axis1):
+def gs_numerical_hamiltonian_along_z(axis, bfield_along_z):
     """
-    Creates a 3-D array containing the points that were operated on by the
-    hamiltonian.
+    This hamiltonian calculation is for the ground state.
 
-    @type axis1: 2D numpy array
+    Creates a 3-D array containing the points that were operated on by the
+    hamiltonian. The bfields values are specific values for a discrete z-value
+    encompassing the XY-YX meshgrid.
+
+     This new array is used as the surface plot for the hamiltonian.
+
+    @type axis: 2D numpy array
+    @type bfield_along_z: 2D numpy array
     @rtype: 3D numpy array
     """
     surface_plots = []
-    for i in range(np.size(axis1)):
+    for i in range(np.size(axis)):
         surface_plots.append([])
     for i in range(len(surface_plots)):
         for j in range(len(surface_plots)):
             surface_plots[i].append(list(lg.eigh(H0 + B_scale * \
-        fullfield(XZ, 0, ZX, stagescale)[i][j] * H_int)[0]))
-
+        bfield_along_z[i][j] * H_int)[0]))
     surface_plots = np.array(surface_plots)
     return surface_plots
 
 
-def excited_hamiltonian_surface_plots(axis1):
+def es_numerical_hamiltonian_along_z(axis, bfield_along_z):
     """
-    Creates a 3-D array containing the points that were operated on by the
-    hamiltonian.
+    This hamiltonian calculation is for the excited state.
 
-    @type axis1: 2D numpy array
+    Creates a 3-D array containing the points that were operated on by the
+    hamiltonian. The bfields values are specific values for a discrete z-value
+    encompassing the XY-YX meshgrid.
+
+     This new array is used as the surface plot for the hamiltonian.
+
+    @type axis: 2D numpy array
+    @type bfield_along_z: 2D numpy array
     @rtype: 3D numpy array
     """
     surface_plots = []
-    for i in range(np.size(axis1)):
+    for i in range(np.size(axis)):
         surface_plots.append([])
     for i in range(len(surface_plots)):
         for j in range(len(surface_plots)):
             surface_plots[i].append(list(lg.eigh(H0_excited + B_scale * \
-        fullfield(XZ, 0, ZX, stagescale)[i][j] * H_int_excited)[0]))
-
+        bfield_along_z[i][j] * H_int_excited)[0]))
     surface_plots = np.array(surface_plots)
     return surface_plots
 
@@ -192,9 +200,30 @@ def rearrange_hamiltonian_points(surface_points, k):
     return np.array(list)
 
 
-## Hamiltonian equations
+def list_to_numpy_matrix(xdim, ydim, bvalues):
+    """
+    Converts a list of b field values into a xdim*ydim numpy matrix.
+
+    @type xdim: List
+    @type ydimL List
+    @type bvalues: List
+    @rtype: numpy array
+    """
+    dim_list = []
+    for i in range(len(xdim)):
+        b_list = []
+        for j in range(len(ydim)):
+            b_list.append(bvalues.pop(0))
+        temp_np = np.array(b_list)
+        dim_list.append(temp_np)
+    return np.array(dim_list)
+
+
+## Ground State Hamiltonian equations
 def H_rot(A, B):
     '''
+    The rotational hamiltonian calculation for the ground state.
+
     These delta functions all are under the assumption that S (electron and
     I (nucleus) never change, thus we can omit them and only need to worry
     about their particular projections.
@@ -214,7 +243,8 @@ def H_rot(A, B):
 
 def H_hfs(A, B):
     """
-    Hamiltonian hyperfine structure. Through the wigner 3-J calculations.
+    Hamiltonian hyperfine structure for the ground state.
+    Through the wigner 3-J calculations.
 
     The two c_hfs terms come about due to the non-spherical, but present
     cylindrical symmetry of the diatomic representation of YbOh.
@@ -282,15 +312,46 @@ def H_sr(A, B):
     * np.sqrt(A.N * (A.N+1) * (2 * A.N+1))
     return H_sr
 
-## Excited Hamiltonian States
-# EXCITED() STATE HAMILTONIANS
-def H_rot_excited(A,B):
+
+## Excited State Hamiltonian Functions
+
+def H_rot_excited(A, B):
+    '''
+    The rotational hamiltonian calculation for the excited state.
+
+    These delta functions all are under the assumption that S (electron and
+    I (nucleus) never change, thus we can omit them and only need to worry
+    about their particular projections.
+
+    Note, objects A != B
+
+    @type A: MolecularState Object
+    @type B: MolecularState Object
+    @rtype: float (Energy value)
+    '''
     # rotational J(J+1)
     H_rot_excited =  delta(A.mI,B.mI) * delta(A.J,B.J) * delta(A.mJ,B.mJ) \
     * (B_rot * A.J * (A.J+1))
     return H_rot_excited
 
-def H_hfs_excited(A,B):
+
+def H_hfs_excited(A, B):
+    """
+    Hamiltonian hyperfine structure for the excited state.
+    Through the wigner 3-J calculations.
+
+    The two c_hfs terms come about due to the non-spherical, but present
+    cylindrical symmetry of the diatomic representation of YbOh.
+    If we choose to ignore them, then the energy levels will behave well
+    as if it were atomic energy levels.
+
+    Note, objects A != B.
+
+    @type A: MolecularState Object
+    @type B: MolecularState Object
+    @rtype: float (Energy Value)
+    """
+
     # hfs I.J
     H_hfs_excited = 0
     for q in (-1,0,1):
@@ -309,10 +370,19 @@ def H_hfs_excited(A,B):
         * (-1)**(A.J-A.mJ) * wigner_3j(A.J,1,B.J,-A.mJ,q,B.mJ) \
         * (-1)**(A.I-A.mI) * wigner_3j(A.I,1,B.I,-A.mI,-q,B.mI) \
         * np.sqrt(A.J*(A.J+1)*(2*A.J+1)) * np.sqrt(A.I*(A.I+1)*(2*A.I+1))
-
     return H_hfs_excited
 
-def H_mag_excited(A,B):
+
+def H_mag_excited(A, B):
+    """
+    Hamiltonian magnetic field for the excited state.
+
+    Note, objects A != B
+
+    @type A: MolecularState Object
+    @type B: MolecularState Object
+    @rtype: float (Energy Value)
+    """
     # external B-field S.B
     H_magnetic_excited = delta(A.mI,B.mI) * delta(A.J,B.J) \
     * delta(A.mJ,B.mJ) * (gJ*A.mJ + gI*A.mI)
@@ -419,6 +489,7 @@ class ExcitedMolecularState():
         What is this?
         """
         return self.J + self.I
+
 
 def excited_sublevel_expand(basis):
     """
@@ -569,38 +640,128 @@ for i in range(N_excited):
         H0_excited[j,i] = H_rot_excited(A,B)
         H0_excited[j,i] += H_hfs_excited(A,B)
 
-H_int_excited = np.matrix(np.zeros((N_excited,N_excited)))
+H_int_excited = np.matrix(np.zeros((N_excited, N_excited)))
 for i in range(N_excited):
     for j in range(N_excited):
         A,B = excited_basis[j], excited_basis[i]
         H_int_excited[j,i] = H_mag_excited(A,B)
 
 
-## Ground State Calculations with Numerical Magnetic Field
+## Loading Bfield values from text-file
 
 #change the directory to the folder containing the b-field data.
-os.chdir("/home/james/Desktop/Molecular-Beam-Decelerator/Molecular_beam_slowing/Magnetic Field Plot/Code")
+os.chdir("/home/james/Desktop/Molecular-Beam-Decelerator/Molecular_beam_slowing/Code/Magnetic Field Plot/Data")
+mag_values = load_txtfile_list("bnorm_actual.txt")
 
-numerical_bfield_values = load_txtfile_list("bnorm_actual.txt")
+# Creates nested list of b-field values.
+bfields = [] #change to lst
 
-surface_plots_xz = hamiltonian_surface_plots(ZX)
+z_len = []
+for i in range(len(z)):
+    bfields.append([]) #change to lst
+    z_len.append(i)
 
-##
-fig = plt.figure("ALL Ground State 3D Lasgna Plots")
-ax = fig.add_subplot(111, projection='3d')
-ax.set_title('All Ground State Lasnga plot 3-D (X and Z)')
-ax.set_xlabel("X [mm]")
-ax.set_ylabel("Z [mm]")
-ax.set_zlabel("Energy Levels")
-energy_curves = []
+loop_range = len(mag_values) // len(z)
+for i in range(loop_range):
+    for i in z_len:
+        popped_value = mag_values.pop(0)
+        bfields[i].append(popped_value)
 
 
+# Bfield values at some Z.
+start = list_to_numpy_matrix(x, y, bfields[0])
+midpoint = list_to_numpy_matrix(x, y, bfields[20])
+end = list_to_numpy_matrix(x, y, bfields[40])
+
+
+## Plotting Hamiltonian Energy levels with Numerical Bfield Values (GROUND STATE)
+# BFIELD VALUES FOR XY---YX AT Z = 0
+fig = plt.figure("(Ground State) Hamiltonian of Numerical BField at (Z = 0)")
+z0_surface_plots_XY = gs_numerical_hamiltonian_along_z(XY, start)
+z0_energy_curves = []
 for i in range(36):
     #36 refers the the dimension of our Hamiltonian matrix (36x36)
-    surface_points_xz = rearrange_hamiltonian_points(surface_plots_xz, i)
-    energy_curves.append(Energy_Curve(surface_points_xz, \
+    surface_points_XY = rearrange_hamiltonian_points(z0_surface_plots_XY, i)
+    z0_energy_curves.append(Energy_Curve(surface_points_XY, \
     "Ground State Energy Curve " + str(i + 1)))
-    ax.plot_surface(XZ *1e3, ZX *1e3, surface_points_xz)
+
+ax = fig.add_subplot(111, projection='3d')
+ax.set_title('(Ground State) Hamiltonian of Numerical BField at (Z = 0)')
+ax.set_xlabel("X [mm]")
+ax.set_ylabel("Y [mm]")
+ax.set_zlabel("(Ground State) Energy Levels of Hamiltonian at (Z = 0)")
+ax.plot_surface(XY *1e3, YX *1e3, z0_energy_curves[0].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3, z0_energy_curves[15].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3,  z0_energy_curves[25].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3,  z0_energy_curves[35].energy_values)
 plt.show()
 
+
+# BFIELD VALUES FOR XY---YX AT Z = 10
+fig = plt.figure("(Ground State) Hamiltonian of Numerical BField at (Z = 10)")
+z10_surface_plots_XY = gs_numerical_hamiltonian_along_z(XY, midpoint)
+z10_energy_curves = []
+for i in range(36):
+    #36 refers the the dimension of our Hamiltonian matrix (36x36)
+    z10_surface_points_XY = rearrange_hamiltonian_points(z10_surface_plots_XY, i)
+    z10_energy_curves.append(Energy_Curve(z10_surface_points_XY, \
+    "Ground State Energy Curve " + str(i + 1)))
+    #ax.plot_surface(XY *1e3, YX *1e3, surface_points_XY)
+
+ax = fig.add_subplot(111, projection='3d')
+ax.set_title('(Ground State) Hamiltonian of Numerical BField at (Z = 10)')
+ax.set_xlabel("X [mm]")
+ax.set_ylabel("Y [mm]")
+ax.set_zlabel("Energy Levels of Hamiltonian at (Z = 10)")
+ax.plot_surface(XY *1e3, YX *1e3, z10_energy_curves[0].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3, z10_energy_curves[15].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3,  z10_energy_curves[25].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3,  z10_energy_curves[35].energy_values)
+plt.show()
+
+
+## Plotting Hamiltonian Energy levels with Numerical Bfield Values (EXCITED STATE)
+# BFIELD VALUES FOR XY---YX AT Z = 0
+fig = plt.figure("(Excited_State)Hamiltonian of Numerical BField at (Z = 0)")
+z0_surface_plots_XY = es_numerical_hamiltonian_along_z(XY, start)
+z0_energy_curves = []
+for i in range(24):
+    #36 refers the the dimension of our Hamiltonian matrix (36x36)
+    surface_points_XY = rearrange_hamiltonian_points(z0_surface_plots_XY, i)
+    z0_energy_curves.append(Energy_Curve(surface_points_XY, \
+    "Ground State Energy Curve " + str(i + 1)))
+
+ax = fig.add_subplot(111, projection='3d')
+ax.set_title('(Excited State) Hamiltonian of Numerical BField at (Z = 0)')
+ax.set_xlabel("X [mm]")
+ax.set_ylabel("Y [mm]")
+ax.set_zlabel("Energy Levels of Hamiltonian at (Z = 0)")
+ax.plot_surface(XY *1e3, YX *1e3, z0_energy_curves[0].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3, z0_energy_curves[8].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3,  z0_energy_curves[14].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3,  z0_energy_curves[23].energy_values)
+plt.show()
+
+
+# BFIELD VALUES FOR XY---YX AT Z = 10
+fig = plt.figure("(Excited State) Hamiltonian of Numerical BField at (Z = 10)")
+z10_surface_plots_XY = es_numerical_hamiltonian_along_z(XY, midpoint)
+z10_energy_curves = []
+for i in range(24):
+    #36 refers the the dimension of our Hamiltonian matrix (36x36)
+    z10_surface_points_XY = rearrange_hamiltonian_points(z10_surface_plots_XY, i)
+    z10_energy_curves.append(Energy_Curve(z10_surface_points_XY, \
+    "Ground State Energy Curve " + str(i + 1)))
+    #ax.plot_surface(XY *1e3, YX *1e3, surface_points_XY)
+
+ax = fig.add_subplot(111, projection='3d')
+ax.set_title('(Excited State) Hamiltonian of Numerical BField at (Z = 10)')
+ax.set_xlabel("X [mm]")
+ax.set_ylabel("Y [mm]")
+ax.set_zlabel("Energy Levels of Hamiltonian at (Z = 10)")
+ax.plot_surface(XY *1e3, YX *1e3, z10_energy_curves[0].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3, z10_energy_curves[8].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3,  z10_energy_curves[14].energy_values)
+ax.plot_surface(XY *1e3, YX *1e3,  z10_energy_curves[23].energy_values)
+plt.show()
 

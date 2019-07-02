@@ -5,7 +5,7 @@ written by Henry Vu, James Park
 
 # Change directory to where the files are located.
 import os
-os.chdir("/home/james/Desktop/EDM Research")
+# os.chdir("/home/james/Desktop/EDM Research")
 
 
 ## Python Packages
@@ -489,9 +489,9 @@ B_scale = 1 # Scale the maximum magnitude of the field produced by the analytic 
 """
 Change these terms to define the smoothness of the plots.
 """
-xterms = 3
-yterms = 3
-zterms = 3 #change this to 4e3
+xterms = 50
+yterms = 50
+zterms = 50 #change this to 4e3
 
 radius = 10 # mm
 zlen = 20 # mm
@@ -620,7 +620,6 @@ ax.set_ylabel("Z [mm]")
 ax.set_zlabel("Energy Levels")
 energy_curves = []
 
-
 for i in range(36):
     #36 refers the the dimension of our Hamiltonian matrix (36x36)
     surface_points_xz = rearrange_hamiltonian_points(surface_plots_xz, i)
@@ -629,7 +628,7 @@ for i in range(36):
     ax.plot_surface(XZ *1e3, ZX *1e3, surface_points_xz)
 plt.show()
 
-
+##
 # Specific Lasgna surfaces
 fig = plt.figure("Specific 3D Lasgna Plots")
 ax = fig.add_subplot(111, projection='3d')

@@ -1,6 +1,5 @@
 import os
-os.chdir("/home/james/Desktop/Molecular-Beam-Decelerator/Molecular_beam_slowing/Magnetic Field Plot/Code")
-
+os.chdir("/home/james/Desktop/Molecular-Beam-Decelerator/Molecular_beam_slowing/Code/Magnetic Field Plot") 
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -69,14 +68,13 @@ def list_to_numpy_matrix(xdim, ydim, bvalues):
         temp_np = np.array(b_list)
         dim_list.append(temp_np)
     return np.array(dim_list)
-    ##
+
+##
     
 #Put in the name of your text file here.
 mag_values = load_txtfile_list("bnorm_actual.txt")
 #print(mag_values)
-print(len(mag_values))
 
-        ##
 
 # Creates nested list of b-field values. 
 bfields = [] #change to lst
@@ -91,7 +89,6 @@ for i in range(loop_range):
     for i in z_len:
         popped_value = mag_values.pop(0)
         bfields[i].append(popped_value)
-
 
 # Bfield values at some Z.
 start = list_to_numpy_matrix(x, y, bfields[0])
